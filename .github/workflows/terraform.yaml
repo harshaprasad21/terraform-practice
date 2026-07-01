@@ -1,0 +1,48 @@
+name: 'Terraform Infrastructure Pipeline'
+
+# 1. THE TRIGGERS: When should this pipeline run?
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  # Allows you to manually click a "Run workflow" button in GitHub
+  workflow_dispatch: 
+
+# 2. THE SECRETS: Injecting your AWS keys securely
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: 'ap-south-1'
+
+# 3. THE ROBOT's INSTRUCTIONS
+jobs:
+  terraform:
+    name: 'Terraform Plan & Apply'
+    # Spins up a fresh, blank Linux virtual machine
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step A: Download your .tf files from your GitHub repo into the runner
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    # Step B: Install the Terraform CLI on the runner
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+
+    # Step C: Connect to S3, download the state, and install AWS plugins
+    - name: Terraform Init
+      run: terraform init
+
+    # Step D: The Dry Run (Runs every time to show you what WILL happen)
+    - name: Terraform Plan
+      id: plan
+      run: terraform plan -no-color
+
+    # Step E: Pouring the Concrete! 
+    # This ONLY runs if you are pushing directly to the 'main' branch.
+    # It bypasses the "yes" prompt with -auto-approve.
+    - name: Terraform Apply
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: terraform apply -auto-approve

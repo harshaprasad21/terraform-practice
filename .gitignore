@@ -1,0 +1,9 @@
+cat <<EOT >> .gitignore
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+*.tfvars
+EOT
