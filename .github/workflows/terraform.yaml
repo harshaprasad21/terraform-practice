@@ -30,6 +30,8 @@ jobs:
     # Step B: Install the Terraform CLI on the runner
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
+      with:
+       terraform_version: 1.12.2
 
     # Step C: Connect to S3, download the state, and install AWS plugins
     - name: Terraform Init
