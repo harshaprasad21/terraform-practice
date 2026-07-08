@@ -3,9 +3,9 @@ name: 'Terraform Infrastructure Pipeline'
 # 1. THE TRIGGERS: When should this pipeline run?
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main-1" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main-1" ]
   # Allows you to manually click a "Run workflow" button in GitHub
   workflow_dispatch: 
 
